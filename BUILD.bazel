@@ -1,0 +1,11 @@
+cc_library(
+    name = "rot13",
+    srcs = ["rot13.cc"],
+    hdrs = ["rot13.h"],
+)
+
+cc_binary(
+    name = "rot13_main",
+    srcs = ["main.cc"],
+    deps = [":rot13"],
+)
