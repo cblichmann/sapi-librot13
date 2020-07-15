@@ -5,6 +5,7 @@
 
 #include <algorithm>
 #include <fstream>
+#include <iostream>
 
 // ROT13-transforms a character. Assumes char is ASCII encoded.
 constexpr char Rot13(char c) {
@@ -18,11 +19,17 @@ constexpr char Rot13(char c) {
 }
 
 int Rot13File(const char* input_file, const char* output_file) {
-  std::ifstream in(input_file, std::ios::binary);
-  std::ofstream out(output_file, std::ios::binary);
-  std::transform(std::istreambuf_iterator<char>(in),
-                 std::istreambuf_iterator<char>(),
-                 std::ostreambuf_iterator<char>(out), Rot13);
+  try {
+    std::ifstream in(input_file, std::ios::binary);
+    in.exceptions(std::ifstream::failbit);
+    std::ofstream out(output_file, std::ios::binary);
+    out.exceptions(std::ofstream::failbit);
+    std::transform(std::istreambuf_iterator<char>(in),
+                   std::istreambuf_iterator<char>(),
+                   std::ostreambuf_iterator<char>(out), Rot13);
+  } catch (std::ios_base::failure& fail) {
+    std::cerr << "ROT13 error: " << fail.what() << std::endl;
+  }
 
   struct rusage rusage;
   if (getrusage(RUSAGE_SELF, &rusage) != 0) {
