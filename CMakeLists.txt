@@ -16,3 +16,18 @@ add_executable(rot13_main
 target_link_libraries(rot13_main PRIVATE
   rot13
 )
+
+# Set this on the command-line
+set(SAPI_ROOT "" CACHE PATH "Path to the Sandboxed API source tree")
+# To obtain a full SAPI_ROOT check out its source separately:
+#   git clone https://github.com/google/sandboxed-api.git $HOME/sapi_root
+# Then configure:
+#   mkdir -p build && cd build
+#   cmake .. -G Ninja -DSAPI_ROOT=$HOME/sapi_root
+
+set(SAPI_ENABLE_EXAMPLES OFF CACHE BOOL "")
+set(SAPI_ENABLE_TESTS OFF CACHE BOOL "")
+add_subdirectory("${SAPI_ROOT}"
+                 "${CMAKE_BINARY_DIR}/sandboxed-api-build"
+                 # Omit this to have the full Sandboxed API in IDE
+                 EXCLUDE_FROM_ALL)
