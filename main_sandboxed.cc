@@ -1,4 +1,5 @@
 #include <libgen.h>
+#include <syscall.h>
 
 #include <iostream>
 
@@ -21,6 +22,17 @@ class Rot13SapiSandbox : public Rot13Sandbox {
       sandbox2::PolicyBuilder*) override {
     // Return a new policy.
     return sandbox2::PolicyBuilder()
+        .AllowStaticStartup()
+        .AllowOpen()
+        .AllowRead()
+        .AllowWrite()
+        .AllowSystemMalloc()
+        .AllowExit()
+        .AllowSyscalls({
+          __NR_futex,  // Google logging and Abseil use this
+          __NR_close,
+          __NR_getrusage,
+        })
         .AddFile(in_file_)
         // Why are we adding a directory here?
         .AddDirectoryAt(dirname(&out_file_[0]), "/output", /*is_ro=*/false)
