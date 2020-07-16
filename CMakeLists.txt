@@ -44,3 +44,11 @@ add_sapi_library(rot13_sapi
 target_include_directories(rot13_sapi INTERFACE
   "${PROJECT_BINARY_DIR}"  # To find the generated SAPI header
 )
+
+add_executable(rot13_sandboxed
+  main_sandboxed.cc
+)
+target_link_libraries(rot13_sandboxed PRIVATE
+  rot13_sapi
+  sapi::sapi
+)
