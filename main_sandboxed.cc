@@ -9,6 +9,20 @@
 ABSL_DECLARE_FLAG(string, sandbox2_danger_danger_permit_all);
 ABSL_DECLARE_FLAG(string, sandbox2_danger_danger_permit_all_and_log);
 
+// Implement a custom sandbox that disables namespaces.
+// Note that we need to use absolute paths for both input and output, as the
+// sandboxee will have a different working directory.
+class Rot13SapiSandbox : public Rot13Sandbox {
+ public:
+  std::unique_ptr<sandbox2::Policy> ModifyPolicy(
+      sandbox2::PolicyBuilder*) override {
+    // Return a new policy.
+    return sandbox2::PolicyBuilder()
+        .DisableNamespaces()
+        .BuildOrDie();
+  }
+};
+
 int main(int argc, char* argv[]) {
   gflags::ParseCommandLineFlags(&argc, &argv, true);
 
@@ -21,7 +35,7 @@ int main(int argc, char* argv[]) {
   std::string out_file(argv[2]);
 
   std::cout << "initializing sandbox...\n";
-  Rot13Sandbox sandbox;
+  Rot13SapiSandbox sandbox;
   sandbox.Init().IgnoreError();
 
   std::cout << "obfuscating " << in_file << ", saving to " << out_file
