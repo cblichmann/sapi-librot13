@@ -1,3 +1,24 @@
+load(
+    "@com_google_sandboxed_api//sandboxed_api/bazel:sapi.bzl",
+    "sapi_library"
+)
+
+sapi_library(
+    name = "rot13_sapi",
+    functions = [
+        "Rot13File",
+    ],
+    input_files = ["rot13.cc"],
+    lib = ":rot13",
+    lib_name = "Rot13",
+)
+
+cc_binary(
+    name = "rot13_sandboxed",
+    srcs = ["main_sandboxed.cc"],
+    deps = [":rot13_sapi"],
+)
+
 cc_library(
     name = "rot13",
     srcs = ["rot13.cc"],
