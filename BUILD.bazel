@@ -1,6 +1,6 @@
 load(
     "@com_google_sandboxed_api//sandboxed_api/bazel:sapi.bzl",
-    "sapi_library"
+    "sapi_library",
 )
 
 sapi_library(
@@ -16,7 +16,15 @@ sapi_library(
 cc_binary(
     name = "rot13_sandboxed",
     srcs = ["main_sandboxed.cc"],
-    deps = [":rot13_sapi"],
+    deps = [
+        ":rot13_sapi",
+        "@com_google_absl//absl/base:log_severity",
+        "@com_google_absl//absl/flags:parse",
+        "@com_google_absl//absl/log",
+        "@com_google_absl//absl/log:check",
+        "@com_google_absl//absl/log:globals",
+        "@com_google_absl//absl/log:initialize",
+    ],
 )
 
 cc_library(

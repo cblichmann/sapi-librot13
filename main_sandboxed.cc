@@ -4,11 +4,15 @@
 #include <iostream>
 
 #include "rot13_sapi.sapi.h"
-#include "sandboxed_api/util/flag.h"
+#include "absl/flags/parse.h"
+#include "absl/log/check.h"
+#include "absl/log/globals.h"
+#include "absl/log/initialize.h"
+#include "absl/log/log.h"
 
 // These exist and can be set programmatically
-ABSL_DECLARE_FLAG(string, sandbox2_danger_danger_permit_all);
-ABSL_DECLARE_FLAG(string, sandbox2_danger_danger_permit_all_and_log);
+ABSL_DECLARE_FLAG(std::string, sandbox2_danger_danger_permit_all);
+ABSL_DECLARE_FLAG(std::string, sandbox2_danger_danger_permit_all_and_log);
 
 // Implement a custom sandbox that disables namespaces.
 // Note that we need to use absolute paths for both input and output, as the
@@ -45,7 +49,9 @@ class Rot13SapiSandbox : public Rot13Sandbox {
 };
 
 int main(int argc, char* argv[]) {
-  gflags::ParseCommandLineFlags(&argc, &argv, true);
+  absl::SetStderrThreshold(absl::LogSeverityAtLeast::kInfo);
+  absl::ParseCommandLine(argc, argv);
+  absl::InitializeLog();
 
   if (argc != 3) {
     std::cerr << "usage: " << basename(argv[0]) << " INPUT OUTPUT\n";
